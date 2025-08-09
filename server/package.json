@@ -1,0 +1,40 @@
+{
+  "name": "autoparts-server",
+  "version": "1.0.0",
+  "description": "Backend API server for AutoParts Store",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "init-db": "node scripts/initDatabase.js",
+    "seed-db": "node scripts/seedDatabase.js"
+  },
+  "dependencies": {
+    "@clerk/clerk-react": "^5.40.0",
+    "@clerk/clerk-sdk-node": "^4.13.23",
+    "@supabase/supabase-js": "^2.54.0",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "autoparts",
+    "ecommerce",
+    "api",
+    "postgresql"
+  ],
+  "author": "AutoParts Store",
+  "license": "MIT"
+}
