@@ -2,10 +2,10 @@ import React from 'react';
 import { ClerkProvider } from '@clerk/clerk-react';
 
 // Clerk configuration
-const clerkPublishableKey = 'pk_test_ZHluYW1pYy1yb3VnaHktNzcuY2xlcmsuYWNjb3VudHMuZGV2JA';
+const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!clerkPublishableKey) {
-  throw new Error('Missing Clerk Publishable Key');
+  throw new Error('Missing Clerk Publishable Key - Please set VITE_CLERK_PUBLISHABLE_KEY in your .env file');
 }
 
 // Clerk appearance customization

@@ -2,10 +2,10 @@ import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 import { User } from '../models/index.js';
 
 // Clerk secret key
-const clerkSecretKey = process.env.CLERK_SECRET_KEY || 'sk_test_xxNYHW8XPDqoBgApdZZglZPq7t1T0ocFWIxN7tydrN';
+const clerkSecretKey = process.env.CLERK_SECRET_KEY;
 
 if (!clerkSecretKey) {
-  throw new Error('Missing Clerk Secret Key');
+  throw new Error('Missing Clerk Secret Key - Please set CLERK_SECRET_KEY in your .env file');
 }
 
 // Middleware to verify Clerk JWT token and sync user

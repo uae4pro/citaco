@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration
-const supabaseUrl = 'https://citaco.lessongen.tech';
-const supabaseAnonKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1NDcxNTYwMCwiZXhwIjo0OTEwMzg5MjAwLCJyb2xlIjoiYW5vbiJ9._Z-ag5rLn3CThOFgXyV51qCsl3jO-yE5SjqTnGGS9h8';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Validate required environment variables
+if (!supabaseUrl) {
+  throw new Error('Missing VITE_SUPABASE_URL - Please set it in your .env file');
+}
+if (!supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY - Please set it in your .env file');
+}
 
 // Create Supabase client with anon key (for public operations)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -651,7 +659,7 @@ export const supabaseHelpers = {
 
   // Storage operations
   storage: {
-    bucketName: 'autoparts-images',
+    bucketName: import.meta.env.VITE_SUPABASE_BUCKET_NAME || 'autoparts-images',
 
     async uploadImage(file, path) {
       console.log('🔧 Supabase: Uploading image:', path);

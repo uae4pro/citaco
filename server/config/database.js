@@ -5,9 +5,14 @@ dotenv.config({ path: '../.env' });
 
 const { Pool } = pkg;
 
+// Validate required environment variables
+if (!process.env.DATABASE_URL) {
+  throw new Error('Missing DATABASE_URL - Please set it in your .env file');
+}
+
 // Database configuration for Supabase
 const dbConfig = {
-  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:[password]@db.citaco.lessongen.tech:5432/postgres',
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false // Required for Supabase connections
   },
