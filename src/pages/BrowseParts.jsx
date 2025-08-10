@@ -32,7 +32,7 @@ export default function BrowseParts() {
     transferGuestCartToUser
   } = useGuestCart();
 
-  const categories = ["engine", "transmission", "brakes", "suspension", "electrical", "body", "interior", "exhaust", "cooling", "fuel_system", "accessory"];
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     // Load parts data regardless of authentication status
@@ -46,10 +46,15 @@ export default function BrowseParts() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const partsData = await supabaseHelpers.parts.getAll();
+      const [partsData, categoriesData] = await Promise.all([
+        supabaseHelpers.parts.getAll(),
+        supabaseHelpers.categories.getActive()
+      ]);
+
       // Filter only active parts for customers
       const activeParts = partsData.filter(part => part.is_active);
       setParts(activeParts);
+      setCategories(categoriesData);
 
       // Load cart data only if user is authenticated
       if (user && isAuthenticated) {
@@ -173,8 +178,8 @@ export default function BrowseParts() {
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {categories.map(cat => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    <SelectItem key={cat.id} value={cat.name}>
+                      {cat.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </SelectItem>
                   ))}
                 </SelectContent>

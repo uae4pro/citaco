@@ -11,10 +11,11 @@ import { useToast } from "@/components/ui/use-toast";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { Loader2 } from "lucide-react";
 
-const categories = ["engine", "transmission", "brakes", "suspension", "electrical", "body", "interior", "exhaust", "cooling", "fuel_system", "accessory"];
 const MAX_IMAGES = 5;
 
 export default function PartForm({ initialData, onSuccess, onCancel }) {
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     part_number: '',
@@ -37,6 +38,25 @@ export default function PartForm({ initialData, onSuccess, onCancel }) {
       setFormData({ ...initialData, image_urls: initialData.image_urls || [] });
     }
   }, [initialData]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const data = await supabaseHelpers.categories.getActive();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error loading categories:", error);
+        toast({
+          title: "Error",
+          description: "Could not load categories.",
+          variant: "destructive",
+        });
+      }
+      setLoadingCategories(false);
+    };
+    loadCategories();
+  }, [toast]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -113,7 +133,15 @@ export default function PartForm({ initialData, onSuccess, onCancel }) {
           <Select name="category" onValueChange={(v) => handleSelectChange('category', v)} value={formData.category}>
             <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
             <SelectContent>
-              {categories.map(cat => <SelectItem key={cat} value={cat}>{cat.replace(/_/g, ' ')}</SelectItem>)}
+              {loadingCategories ? (
+                <SelectItem value="" disabled>Loading categories...</SelectItem>
+              ) : (
+                categories.map(cat => (
+                  <SelectItem key={cat.id} value={cat.name}>
+                    {cat.name.replace(/_/g, ' ')}
+                  </SelectItem>
+                ))
+              )}
             </SelectContent>
           </Select>
         </div>
