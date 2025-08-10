@@ -203,11 +203,11 @@ export default function BrowseParts() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Prices</SelectItem>
-                  <SelectItem value="0-25">$0 - $25</SelectItem>
-                  <SelectItem value="25-50">$25 - $50</SelectItem>
-                  <SelectItem value="50-100">$50 - $100</SelectItem>
-                  <SelectItem value="100-500">$100 - $500</SelectItem>
-                  <SelectItem value="500">$500+</SelectItem>
+                  <SelectItem value="0-25">AED 0 - AED 25</SelectItem>
+                  <SelectItem value="25-50">AED 25 - AED 50</SelectItem>
+                  <SelectItem value="50-100">AED 50 - AED 100</SelectItem>
+                  <SelectItem value="100-500">AED 100 - AED 500</SelectItem>
+                  <SelectItem value="500">AED 500+</SelectItem>
                 </SelectContent>
               </Select>
 
