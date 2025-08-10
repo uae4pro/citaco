@@ -130,18 +130,16 @@ export default function PartForm({ initialData, onSuccess, onCancel }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
-          <Select name="category" onValueChange={(v) => handleSelectChange('category', v)} value={formData.category}>
-            <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+          <Select name="category" onValueChange={(v) => handleSelectChange('category', v)} value={formData.category} disabled={loadingCategories}>
+            <SelectTrigger>
+              <SelectValue placeholder={loadingCategories ? "Loading categories..." : "Select category"} />
+            </SelectTrigger>
             <SelectContent>
-              {loadingCategories ? (
-                <SelectItem value="" disabled>Loading categories...</SelectItem>
-              ) : (
-                categories.map(cat => (
-                  <SelectItem key={cat.id} value={cat.name}>
-                    {cat.name.replace(/_/g, ' ')}
-                  </SelectItem>
-                ))
-              )}
+              {categories.map(cat => (
+                <SelectItem key={cat.id} value={cat.name}>
+                  {cat.name.replace(/_/g, ' ')}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

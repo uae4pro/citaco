@@ -18,7 +18,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     // Disable Supabase auth since we're using Clerk
     autoRefreshToken: false,
     persistSession: false,
-    detectSessionInUrl: false
+    detectSessionInUrl: false,
+    storageKey: 'supabase-anon-auth'
   },
   realtime: {
     // Enable realtime features if needed
@@ -34,7 +35,8 @@ export const supabaseAdmin = supabaseServiceKey
   ? createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
-        persistSession: false
+        persistSession: false,
+        storageKey: 'supabase-admin-auth'
       }
     })
   : supabase; // Fallback to regular client if no service key
