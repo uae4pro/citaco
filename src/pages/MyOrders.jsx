@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Package, Calendar, DollarSign, Truck, Eye, ShoppingBag } from "lucide-react";
+import { Package, Calendar, Coins, Truck, Eye, ShoppingBag } from "lucide-react";
+import { formatCurrency } from "@/utils/currency";
 
 export default function MyOrders() {
   const { user } = useAuth();
@@ -57,12 +58,7 @@ export default function MyOrders() {
     });
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'AED'
-    }).format(amount);
-  };
+  // Using imported formatCurrency utility
 
   if (isLoading) {
     return (
@@ -118,7 +114,7 @@ export default function MyOrders() {
                             {formatDate(order.created_date)}
                           </div>
                           <div className="flex items-center gap-1">
-                            <DollarSign className="w-4 h-4" />
+                            <Coins className="w-4 h-4" />
                             {formatCurrency(order.total_amount)}
                           </div>
                         </div>

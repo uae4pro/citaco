@@ -13,6 +13,7 @@ import { ShoppingCart, Package, ChevronLeft, Plus, Minus, CheckCircle, XCircle, 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { formatCurrency } from "@/utils/currency";
 
 export default function ProductDetails() {
   const [part, setPart] = useState(null);
@@ -222,7 +223,7 @@ export default function ProductDetails() {
                 
                 <h1 className="text-4xl font-bold text-slate-900">{part.name}</h1>
                 <p className="text-slate-500">Part #{part.part_number}</p>
-                <p className="text-4xl font-bold text-blue-600">AED {part.price.toFixed(2)}</p>
+                <p className="text-4xl font-bold text-blue-600">{formatCurrency(part.price)}</p>
 
                 <p className="text-slate-600 text-lg leading-relaxed">
                   {part.description}

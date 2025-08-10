@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
+import { formatCurrency } from "@/utils/currency";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -170,7 +171,7 @@ export default function Cart() {
                           <h4 className="font-semibold text-slate-900">{part.name}</h4>
                           <p className="text-sm text-slate-500">Part #{part.part_number}</p>
                           <p className="text-lg font-bold text-slate-900 mt-1">
-                            AED {part.price.toFixed(2)}
+                            {formatCurrency(part.price)}
                           </p>
                         </div>
 
@@ -207,7 +208,7 @@ export default function Cart() {
 
                           <div className="text-right">
                             <p className="font-bold text-slate-900">
-                              AED {(part.price * cartItem.quantity).toFixed(2)}
+                              {formatCurrency(part.price * cartItem.quantity)}
                             </p>
                           </div>
 
@@ -240,7 +241,7 @@ export default function Cart() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span>Subtotal:</span>
-                    <span className="font-semibold">AED {cartTotal.toFixed(2)}</span>
+                    <span className="font-semibold">{formatCurrency(cartTotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping:</span>
@@ -250,7 +251,7 @@ export default function Cart() {
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-bold">Total:</span>
                       <span className="text-xl font-bold text-blue-600">
-                        AED {cartTotal.toFixed(2)}
+                        {formatCurrency(cartTotal)}
                       </span>
                     </div>
                   </div>

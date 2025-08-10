@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Package } from "lucide-react";
+import { formatCurrency } from "@/utils/currency";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -98,7 +99,7 @@ export default function ProductCard({ part, onAddToCart, cartQuantity, isAuthent
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-2xl font-bold text-slate-900">
-                  AED {part.price.toFixed(2)}
+                  {formatCurrency(part.price)}
                 </p>
                 <p className="text-sm text-slate-500">
                   Stock: {part.stock_quantity}

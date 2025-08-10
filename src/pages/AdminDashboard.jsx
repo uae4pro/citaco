@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Wrench, Package, DollarSign, Users, TrendingUp, TrendingDown } from "lucide-react";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatCurrency } from "@/utils/currency";
 
 // Helper function to safely format dates
 const formatDate = (dateString) => {
@@ -108,7 +109,7 @@ export default function AdminDashboard() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <StatCard title="Total Parts" value={stats.parts} icon={Wrench} trend="+5 this month" trendDirection="up" />
           <StatCard title="Total Orders" value={stats.orders} icon={Package} trend="+12 this month" trendDirection="up" />
-          <StatCard title="Total Revenue" value={`AED ${stats.revenue.toFixed(2)}`} icon={DollarSign} trend="+8% this month" trendDirection="up" />
+          <StatCard title="Total Revenue" value={formatCurrency(stats.revenue)} icon={DollarSign} trend="+8% this month" trendDirection="up" />
           <StatCard title="Total Users" value={stats.users} icon={Users} trend="+2 this week" trendDirection="up" />
         </div>
 
@@ -136,7 +137,7 @@ export default function AdminDashboard() {
                       <TableCell>{formatDate(order.order_date)}</TableCell>
                       <TableCell><Badge>{order.status}</Badge></TableCell>
                       <TableCell className="text-right">
-                        AED {order.total_amount ? order.total_amount.toFixed(2) : '0.00'}
+                        {formatCurrency(order.total_amount || 0)}
                       </TableCell>
                     </TableRow>
                   ))}
