@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Package } from "lucide-react";
 import { formatCurrency } from "@/utils/currency";
+import { getSaleStatus } from "@/utils/pricing";
+import SaleBadge from "@/components/ui/SaleBadge";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 export default function ProductCard({ part, onAddToCart, cartQuantity, isAuthenticated = true }) {
   const navigate = useNavigate();
+  const saleStatus = getSaleStatus(part);
 
   const categoryColors = {
     engine: "bg-red-100 text-red-800",
@@ -97,11 +100,28 @@ export default function ProductCard({ part, onAddToCart, cartQuantity, isAuthent
             )}
 
             <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-2xl font-bold text-slate-900">
-                  {formatCurrency(part.price)}
-                </p>
-                <p className="text-sm text-slate-500">
+              <div className="flex-1">
+                {saleStatus.isOnSale && saleStatus.isActive ? (
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-2xl font-bold text-red-600">
+                        {formatCurrency(part.price)}
+                      </p>
+                      <SaleBadge discountPercentage={part.discount_percentage} />
+                    </div>
+                    <p className="text-lg text-slate-500 line-through">
+                      {formatCurrency(part.original_price)}
+                    </p>
+                    <p className="text-sm text-green-600 font-medium">
+                      You save {formatCurrency(saleStatus.savings)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-2xl font-bold text-slate-900">
+                    {formatCurrency(part.original_price || part.price)}
+                  </p>
+                )}
+                <p className="text-sm text-slate-500 mt-1">
                   Stock: {part.stock_quantity}
                 </p>
               </div>

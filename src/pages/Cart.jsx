@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { formatCurrency } from "@/utils/currency";
+import { getSaleStatus } from "@/utils/pricing";
+import SaleBadge from "@/components/ui/SaleBadge";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -147,10 +149,16 @@ export default function Cart() {
                       id: cartItem.spare_part_id,
                       name: cartItem.part_name,
                       price: cartItem.part_price,
+                      original_price: cartItem.part_original_price || cartItem.part_price,
+                      discount_percentage: cartItem.part_discount_percentage || 0,
+                      is_on_sale: cartItem.part_is_on_sale || false,
+                      sale_start_date: cartItem.part_sale_start_date,
+                      sale_end_date: cartItem.part_sale_end_date,
                       image_url: cartItem.part_image
                     };
                     if (!part) return null;
 
+                    const saleStatus = getSaleStatus(part);
                     const isUpdating = updating[cartItem.id || cartItem.spare_part_id];
 
                     return (
@@ -170,9 +178,24 @@ export default function Cart() {
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-slate-900">{part.name}</h4>
                           <p className="text-sm text-slate-500">Part #{part.part_number}</p>
-                          <p className="text-lg font-bold text-slate-900 mt-1">
-                            {formatCurrency(part.price)}
-                          </p>
+
+                          {saleStatus.isOnSale && saleStatus.isActive ? (
+                            <div className="mt-1">
+                              <div className="flex items-center gap-2">
+                                <p className="text-lg font-bold text-red-600">
+                                  {formatCurrency(part.price)}
+                                </p>
+                                <SaleBadge discountPercentage={part.discount_percentage} />
+                              </div>
+                              <p className="text-sm text-slate-500 line-through">
+                                Was: {formatCurrency(part.original_price)}
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-lg font-bold text-slate-900 mt-1">
+                              {formatCurrency(part.original_price || part.price)}
+                            </p>
+                          )}
                         </div>
 
                         <div className="flex items-center gap-3">

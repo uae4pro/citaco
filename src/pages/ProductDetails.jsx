@@ -14,6 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { formatCurrency } from "@/utils/currency";
+import { getSaleStatus } from "@/utils/pricing";
+import SaleBadge from "@/components/ui/SaleBadge";
 
 export default function ProductDetails() {
   const [part, setPart] = useState(null);
@@ -30,6 +32,7 @@ export default function ProductDetails() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const partId = urlParams.get('id');
+  const saleStatus = part ? getSaleStatus(part) : { isOnSale: false, isActive: false };
 
   useEffect(() => {
     const loadData = async () => {
@@ -223,7 +226,32 @@ export default function ProductDetails() {
                 
                 <h1 className="text-4xl font-bold text-slate-900">{part.name}</h1>
                 <p className="text-slate-500">Part #{part.part_number}</p>
-                <p className="text-4xl font-bold text-blue-600">{formatCurrency(part.price)}</p>
+
+                {saleStatus.isOnSale && saleStatus.isActive ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <p className="text-4xl font-bold text-red-600">
+                        {formatCurrency(part.price)}
+                      </p>
+                      <SaleBadge
+                        discountPercentage={part.discount_percentage}
+                        className="text-lg px-3 py-1"
+                      />
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <p className="text-2xl text-slate-500 line-through">
+                        Was: {formatCurrency(part.original_price)}
+                      </p>
+                      <p className="text-xl text-green-600 font-semibold">
+                        You save {formatCurrency(saleStatus.savings)}!
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-4xl font-bold text-blue-600">
+                    {formatCurrency(part.original_price || part.price)}
+                  </p>
+                )}
 
                 <p className="text-slate-600 text-lg leading-relaxed">
                   {part.description}

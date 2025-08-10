@@ -12,6 +12,7 @@ import { Search, ShoppingCart, Package, Filter, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../components/shop/ProductCard";
 import ShoppingCartSidebar from "../components/shop/ShoppingCartSidebar";
+import { isSaleActive } from "@/utils/pricing";
 
 export default function BrowseParts() {
   const [parts, setParts] = useState([]);
@@ -20,6 +21,7 @@ export default function BrowseParts() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
+  const [saleFilter, setSaleFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
   const [showCartSidebar, setShowCartSidebar] = useState(false);
@@ -41,7 +43,7 @@ export default function BrowseParts() {
 
   useEffect(() => {
     filterParts();
-  }, [parts, searchTerm, selectedCategory, selectedBrand, priceRange]);
+  }, [parts, searchTerm, selectedCategory, selectedBrand, priceRange, saleFilter]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -91,6 +93,18 @@ export default function BrowseParts() {
       filtered = filtered.filter(part => {
         if (max) return part.price >= min && part.price <= max;
         return part.price >= min;
+      });
+    }
+
+    // Add sale filter
+    if (saleFilter !== "all") {
+      filtered = filtered.filter(part => {
+        if (saleFilter === "on_sale") {
+          return part.is_on_sale && isSaleActive(part.sale_start_date, part.sale_end_date);
+        } else if (saleFilter === "regular") {
+          return !part.is_on_sale || !isSaleActive(part.sale_start_date, part.sale_end_date);
+        }
+        return true;
       });
     }
 
@@ -160,7 +174,7 @@ export default function BrowseParts() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
                 <Input
@@ -211,6 +225,17 @@ export default function BrowseParts() {
                 </SelectContent>
               </Select>
 
+              <Select value={saleFilter} onValueChange={setSaleFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sale Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Items</SelectItem>
+                  <SelectItem value="on_sale">🏷️ On Sale Only</SelectItem>
+                  <SelectItem value="regular">Regular Price</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Button
                 variant="outline"
                 onClick={() => {
@@ -218,6 +243,7 @@ export default function BrowseParts() {
                   setSelectedCategory("all");
                   setSelectedBrand("all");
                   setPriceRange("all");
+                  setSaleFilter("all");
                 }}
               >
                 Clear Filters

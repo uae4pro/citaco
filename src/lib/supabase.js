@@ -429,13 +429,26 @@ export const supabaseHelpers = {
 
     async create(partData) {
       console.log('🔧 Supabase: Creating part with data:', partData);
+
+      // Calculate final price based on discount
+      const originalPrice = partData.original_price || partData.price || 0;
+      const finalPrice = partData.is_on_sale && partData.discount_percentage > 0
+        ? originalPrice * (1 - (partData.discount_percentage / 100))
+        : originalPrice;
+
+      const partWithPricing = {
+        ...partData,
+        original_price: originalPrice,
+        price: finalPrice,
+        discount_percentage: partData.discount_percentage || 0,
+        is_on_sale: partData.is_on_sale || false,
+        created_date: new Date().toISOString(),
+        updated_date: new Date().toISOString()
+      };
+
       const { data, error } = await supabaseAdmin
         .from('spare_parts')
-        .insert([{
-          ...partData,
-          created_date: new Date().toISOString(),
-          updated_date: new Date().toISOString()
-        }])
+        .insert([partWithPricing])
         .select()
         .single();
 
@@ -449,12 +462,23 @@ export const supabaseHelpers = {
 
     async update(partId, updateData) {
       console.log('🔧 Supabase: Updating part:', partId, updateData);
+
+      // Calculate final price based on discount
+      const originalPrice = updateData.original_price || updateData.price || 0;
+      const finalPrice = updateData.is_on_sale && updateData.discount_percentage > 0
+        ? originalPrice * (1 - (updateData.discount_percentage / 100))
+        : originalPrice;
+
+      const dataWithPricing = {
+        ...updateData,
+        original_price: originalPrice,
+        price: finalPrice,
+        updated_date: new Date().toISOString()
+      };
+
       const { data, error } = await supabaseAdmin
         .from('spare_parts')
-        .update({
-          ...updateData,
-          updated_date: new Date().toISOString()
-        })
+        .update(dataWithPricing)
         .eq('id', partId)
         .select()
         .single();
