@@ -454,6 +454,13 @@ export const supabaseHelpers = {
 
       if (error) {
         console.error('❌ Supabase create part error:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        console.error('❌ Data that failed:', partWithPricing);
         throw error;
       }
       console.log('✅ Supabase: Part created successfully:', data);

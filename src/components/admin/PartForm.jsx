@@ -67,11 +67,16 @@ export default function PartForm({ initialData, onSuccess, onCancel }) {
   useEffect(() => {
     if (formData.is_on_sale && formData.original_price > 0 && formData.discount_percentage > 0) {
       const discountedPrice = formData.original_price * (1 - formData.discount_percentage / 100);
-      setFormData(prev => ({ ...prev, price: discountedPrice }));
+      const roundedPrice = Math.round(discountedPrice * 100) / 100; // Round to 2 decimal places
+      if (Math.abs(formData.price - roundedPrice) > 0.01) { // Only update if significantly different
+        setFormData(prev => ({ ...prev, price: roundedPrice }));
+      }
     } else if (!formData.is_on_sale && formData.original_price > 0) {
-      setFormData(prev => ({ ...prev, price: formData.original_price }));
+      if (Math.abs(formData.price - formData.original_price) > 0.01) { // Only update if different
+        setFormData(prev => ({ ...prev, price: formData.original_price }));
+      }
     }
-  }, [formData.is_on_sale, formData.original_price, formData.discount_percentage]);
+  }, [formData.is_on_sale, formData.original_price, formData.discount_percentage, formData.price]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -92,12 +97,32 @@ export default function PartForm({ initialData, onSuccess, onCancel }) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // Validation
+      if (!formData.name?.trim()) {
+        throw new Error('Part name is required');
+      }
+      if (!formData.original_price || parseFloat(formData.original_price) <= 0) {
+        throw new Error('Original price must be greater than 0');
+      }
+
       const dataToSubmit = {
         ...formData,
-        price: parseFloat(formData.price),
-        stock_quantity: parseInt(formData.stock_quantity, 10),
-        weight: parseFloat(formData.weight),
+        name: formData.name.trim(),
+        price: parseFloat(formData.price) || parseFloat(formData.original_price) || 0,
+        original_price: parseFloat(formData.original_price) || 0,
+        discount_percentage: Math.min(Math.max(parseFloat(formData.discount_percentage) || 0, 0), 100),
+        stock_quantity: parseInt(formData.stock_quantity, 10) || 0,
+        weight: parseFloat(formData.weight) || 0,
+        is_on_sale: Boolean(formData.is_on_sale),
+        is_active: Boolean(formData.is_active),
+        // Handle empty date strings
+        sale_start_date: formData.sale_start_date?.trim() || null,
+        sale_end_date: formData.sale_end_date?.trim() || null,
+        // Ensure arrays are properly formatted
+        image_urls: Array.isArray(formData.image_urls) ? formData.image_urls : [],
       };
+
+      console.log('📝 Form data being submitted:', dataToSubmit);
 
       if (initialData) {
         await supabaseHelpers.parts.update(initialData.id, dataToSubmit);
@@ -109,7 +134,12 @@ export default function PartForm({ initialData, onSuccess, onCancel }) {
       onSuccess();
     } catch (error) {
       console.error("Error saving part:", error);
-      toast({ title: "Error", description: "Could not save part.", variant: "destructive" });
+      const errorMessage = error.message || "Could not save part.";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
     setIsSubmitting(false);
   };
