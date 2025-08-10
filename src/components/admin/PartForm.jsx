@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import ImageUpload from "@/components/ui/ImageUpload";
+import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 
 const MAX_IMAGES = 5;

@@ -12,22 +12,24 @@ export function ClerkAuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [lastSyncedUserId, setLastSyncedUserId] = useState(null);
 
-  // Sync Clerk user with Supabase user profile
+  // Sync Clerk user with Supabase user profile (single effect to avoid duplicates)
   useEffect(() => {
     if (clerkLoaded) {
-      console.log('🔄 Clerk loaded, starting sync. User:', clerkUser?.id);
-      syncUserProfile();
+      if (clerkUser && clerkUser.id !== lastSyncedUserId) {
+        console.log('🔄 Clerk loaded, starting sync. User:', clerkUser.id);
+        setLastSyncedUserId(clerkUser.id);
+        syncUserProfile();
+      } else if (!clerkUser) {
+        console.log('❌ No Clerk user found, clearing state');
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsLoading(false);
+        setLastSyncedUserId(null);
+      }
     }
-  }, [clerkUser, clerkLoaded]);
-
-  // Force sync when user changes
-  useEffect(() => {
-    if (clerkUser && clerkLoaded) {
-      console.log('👤 Clerk user changed, forcing sync:', clerkUser.id);
-      syncUserProfile();
-    }
-  }, [clerkUser?.id]);
+  }, [clerkUser?.id, clerkLoaded, lastSyncedUserId]); // Only depend on user ID and loaded state
 
   const syncUserProfile = async () => {
     try {

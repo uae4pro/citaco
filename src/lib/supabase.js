@@ -19,7 +19,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: false,
     persistSession: false,
     detectSessionInUrl: false,
-    storageKey: 'supabase-anon-auth'
+    storageKey: `supabase-anon-auth-${Date.now()}` // Unique storage key to avoid conflicts
   },
   realtime: {
     // Enable realtime features if needed
@@ -36,7 +36,7 @@ export const supabaseAdmin = supabaseServiceKey
       auth: {
         autoRefreshToken: false,
         persistSession: false,
-        storageKey: 'supabase-admin-auth'
+        storageKey: `supabase-admin-auth-${Date.now()}` // Unique storage key to avoid conflicts
       }
     })
   : supabase; // Fallback to regular client if no service key
